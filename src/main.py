@@ -1,8 +1,8 @@
 import time
 
 import graphix
-from ball import Ball
-from vector2 import Vector2
+from actors.ball import Ball
+from utils.vector2 import Vector2
 
 
 def main():
