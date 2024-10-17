@@ -85,12 +85,13 @@ _root.withdraw()
 
 _update_lasttime = time.time()
 
-def update(rate:int | None = None) -> None:
+
+def update(rate: int | None = None) -> None:
     """Force pending graphics updates to be applied to be displayed."""
     global _update_lasttime
     if rate:
         now = time.time()
-        pause_length = 1/rate-(now-_update_lasttime)
+        pause_length = 1 / rate - (now - _update_lasttime)
         if pause_length > 0:
             time.sleep(pause_length)
             _update_lasttime = now + pause_length
@@ -99,21 +100,41 @@ def update(rate:int | None = None) -> None:
 
     _root.update()
 
+
 ############################################################################
 # Graphics classes start here
+
 
 class Window(tk.Canvas):
     """A Window is a toplevel window for displaying graphics."""
 
-    __slots = ["_items", "_mouse_x", "_mouse_y", "master", "tk", "_autoflush",
-               "_name", "_w", "children", "_tclCommands","background_colour",
-               "_mouse_callback", "_closed", "_last_key", "widgetName"]
+    __slots = [
+        "_items",
+        "_mouse_x",
+        "_mouse_y",
+        "master",
+        "tk",
+        "_autoflush",
+        "_name",
+        "_w",
+        "children",
+        "_tclCommands",
+        "background_colour",
+        "_mouse_callback",
+        "_closed",
+        "_last_key",
+        "widgetName",
+    ]
 
     __readonly = ["width", "height"]
 
-    def __init__(self, title: str ="Graphix Window",
-                 width: int = 400, height: int = 400,
-                 autoflush: bool = True) -> None:
+    def __init__(
+        self,
+        title: str = "Graphix Window",
+        width: int = 400,
+        height: int = 400,
+        autoflush: bool = True,
+    ) -> None:
         """Initialises and opens a graphics window."""
         if not isinstance(title, str):
             raise GraphixError("Window title must be a string")
@@ -124,13 +145,14 @@ class Window(tk.Canvas):
 
         master = tk.Toplevel(_root)
         master.protocol("WM_DELETE_WINDOW", self.close)
-        tk.Canvas.__init__(self, master, width=width, height=height,
-                           highlightthickness=0, bd=0)
+        tk.Canvas.__init__(
+            self, master, width=width, height=height, highlightthickness=0, bd=0
+        )
         self.master.title(title)  # type: ignore
-        self.master.attributes('-topmost', True)    # type: ignore
+        self.master.attributes("-topmost", True)  # type: ignore
         self.pack()
-        master.resizable(0,0)  # type: ignore
-        #self.foreground = "black"
+        master.resizable(0, 0)  # type: ignore
+        # self.foreground = "black"
         self._items: list[GraphixObject] = []
         self._mouse_x = None
         self._mouse_y = None
@@ -150,8 +172,10 @@ class Window(tk.Canvas):
         if self.is_closed():
             return "<Closed Window>"
         else:
-            return (f"Window('{self.master.title()}', "  # type: ignore
-                    f"{self.width}, {self.height})")  
+            return (
+                f"Window('{self.master.title()}', "  # type: ignore
+                f"{self.width}, {self.height})"
+            )
 
     def __str__(self) -> str:
         """Returns a string representation of the window."""
@@ -194,18 +218,18 @@ class Window(tk.Canvas):
     def get_mouse(self) -> Point:
         """Waits for a mouse click and returns a Point object representing the
         click."""
-        self.update()      # flush any prior clicks
+        self.update()  # flush any prior clicks
         self._mouse_x = None
         self._mouse_y = None
         while self._mouse_x is None or self._mouse_y is None:
             self.update()
             if self.is_closed():
                 raise GraphixError("get_mouse in closed window")
-            time.sleep(.1) # give up thread
-        x,y = cast(int, self._mouse_x), cast(int, self._mouse_y)
+            time.sleep(0.1)  # give up thread
+        x, y = cast(int, self._mouse_x), cast(int, self._mouse_y)
         self._mouse_x = None
         self._mouse_y = None
-        return Point(x,y)
+        return Point(x, y)
 
     def check_mouse(self) -> Point | None:
         """Returns last mouse click or None if mouse has not been clicked
@@ -214,7 +238,7 @@ class Window(tk.Canvas):
             raise GraphixError("check_mouse in closed window")
         self.update()
         if self._mouse_x is not None and self._mouse_y is not None:
-            x,y = self._mouse_x, self._mouse_y
+            x, y = self._mouse_x, self._mouse_y
             self._mouse_x = None
             self._mouse_y = None
             return Point(cast(int, x), cast(int, y))
@@ -228,15 +252,15 @@ class Window(tk.Canvas):
             self.update()
             if self.is_closed():
                 raise GraphixError("get_key in closed window")
-            time.sleep(.1) # give up thread
+            time.sleep(0.1)  # give up thread
 
         key = self._last_key
         self._last_key = ""
         return key
 
     def check_key(self) -> str | None:
-        """Returns last key pressed or None if no key pressed since 
-           last call."""
+        """Returns last key pressed or None if no key pressed since
+        last call."""
         if self.is_closed():
             raise GraphixError("check_key in closed window")
         self.update()
@@ -302,14 +326,15 @@ class Window(tk.Canvas):
 # Default values for various item configuration options. Only a subset of
 #   keys may be present in the configuration dictionary for a given item
 DEFAULT_CONFIG = {
-    "fill":"",
-    "outline":"black",
-    "width":"1",
-    "arrow":"none",
-    "text":"",
-    "justify":"center",
-    "font": ("helvetica", 12, "normal")
+    "fill": "",
+    "outline": "black",
+    "width": "1",
+    "arrow": "none",
+    "text": "",
+    "justify": "center",
+    "font": ("helvetica", 12, "normal"),
 }
+
 
 class GraphixObject(ABC):
     """Generic base class for all of the drawable objects"""
@@ -337,8 +362,9 @@ class GraphixObject(ABC):
         return self.__repr__()
 
     def __getattr__(self, name) -> Any:
-        raise AttributeError(f"'{self.__class__.__name__}' "
-                             f"object has no attribute '{name}'")
+        raise AttributeError(
+            f"'{self.__class__.__name__}' " f"object has no attribute '{name}'"
+        )
 
     @property
     def fill_colour(self) -> str:
@@ -407,11 +433,11 @@ class GraphixObject(ABC):
         return self._canvas is not None
 
     def move(self, dx: int, dy: int) -> None:
-        """Moves object dx units in x direction and dy units in y 
+        """Moves object dx units in x direction and dy units in y
         direction."""
         if not isinstance(dx, int) or not isinstance(dy, int):
             raise GraphixError("Move distances must be integers")
-        self._move(dx,dy)
+        self._move(dx, dy)
         canvas = self._canvas
         if canvas and not canvas.is_closed():
             x = dx
@@ -485,13 +511,13 @@ class Point(GraphixObject):
 
     def clone(self) -> Point:
         """Returns a clone of the point."""
-        other = Point(self.x,self.y)
+        other = Point(self.x, self.y)
         other._config = self._config.copy()
         return other
 
     def _draw(self, canvas, options):
-        x,y = self.x,self.y
-        return canvas.create_rectangle(x,y,x+1,y+1,options)
+        x, y = self.x, self.y
+        return canvas.create_rectangle(x, y, x + 1, y + 1, options)
 
     def _move(self, dx, dy):
         self._x = self._x + dx
@@ -504,8 +530,7 @@ class _BBox(GraphixObject):
 
     __slots__ = ["_p1", "_p2"]
 
-    def __init__(self, p1: Point, p2: Point,
-                 options=None) -> None:
+    def __init__(self, p1: Point, p2: Point, options=None) -> None:
         if options is None:
             options = ["outline", "width", "fill"]
         GraphixObject.__init__(self, options)
@@ -528,7 +553,7 @@ class _BBox(GraphixObject):
         """Returns a clone of the centre point."""
         p1 = self._p1
         p2 = self._p2
-        return Point((p1.x+p2.x) // 2, (p1.y+p2.y) // 2)
+        return Point((p1.x + p2.x) // 2, (p1.y + p2.y) // 2)
 
 
 class Rectangle(_BBox):
@@ -549,9 +574,9 @@ class Rectangle(_BBox):
     def _draw(self, canvas, options):
         p1 = self._p1
         p2 = self._p2
-        x1,y1 = p1.x,p1.y
-        x2,y2 = p2.x,p2.y
-        return canvas.create_rectangle(x1,y1,x2,y2,options)
+        x1, y1 = p1.x, p1.y
+        x2, y2 = p2.x, p2.y
+        return canvas.create_rectangle(x1, y1, x2, y2, options)
 
     def clone(self) -> Rectangle:
         """Returns a clone of the rectangle."""
@@ -562,7 +587,7 @@ class Rectangle(_BBox):
 
 class Oval(_BBox):
     """A class representing an oval with two opposite bounding-box
-       points p1 and p2."""
+    points p1 and p2."""
 
     __slots__ = []
 
@@ -585,9 +610,9 @@ class Oval(_BBox):
     def _draw(self, canvas, options):
         p1 = self._p1
         p2 = self._p2
-        x1,y1 = p1.x,p1.y
-        x2,y2 = p2.x,p2.y
-        return canvas.create_oval(x1,y1,x2,y2,options)
+        x1, y1 = p1.x, p1.y
+        x2, y2 = p2.x, p2.y
+        return canvas.create_oval(x1, y1, x2, y2, options)
 
 
 class Circle(Oval):
@@ -601,8 +626,8 @@ class Circle(Oval):
             raise GraphixError("Circle centre must be a Point object")
         if not isinstance(radius, int):
             raise GraphixError("Circle radius must be an integer")
-        p1 = Point(centre.x-radius, centre.y-radius)
-        p2 = Point(centre.x+radius, centre.y+radius)
+        p1 = Point(centre.x - radius, centre.y - radius)
+        p2 = Point(centre.x + radius, centre.y + radius)
         Oval.__init__(self, p1, p2)
         self._radius = radius
 
@@ -631,8 +656,8 @@ class Line(_BBox):
         """Initialises the line with two end points."""
         if not isinstance(p1, Point) or not isinstance(p2, Point):
             raise GraphixError("Line points must be Point objects")
-        _BBox.__init__(self, p1, p2, ["arrow","fill","width"])
-        self.fill_colour = cast(str, DEFAULT_CONFIG['outline'])
+        _BBox.__init__(self, p1, p2, ["arrow", "fill", "width"])
+        self.fill_colour = cast(str, DEFAULT_CONFIG["outline"])
 
     # setting outline_colour to be the same as fill_colour
 
@@ -647,7 +672,7 @@ class Line(_BBox):
 
     @arrow.setter
     def arrow(self, option: str) -> None:
-        if not option in ["first","last","both","none"]:
+        if not option in ["first", "last", "both", "none"]:
             raise GraphixError(BAD_OPTION)
         self._reconfig("arrow", option)
 
@@ -671,9 +696,9 @@ class Line(_BBox):
     def _draw(self, canvas, options):
         p1 = self._p1
         p2 = self._p2
-        x1,y1 = p1.x,p1.y
-        x2,y2 = p2.x,p2.y
-        return canvas.create_line(x1,y1,x2,y2,options)
+        x1, y1 = p1.x, p1.y
+        x2, y2 = p2.x, p2.y
+        return canvas.create_line(x1, y1, x2, y2, options)
 
 
 class Polygon(GraphixObject):
@@ -708,12 +733,12 @@ class Polygon(GraphixObject):
         if not isinstance(dx, int) or not isinstance(dy, int):
             raise GraphixError("Move distances must both be integers")
         for p in self._points:
-            p.move(dx,dy)
+            p.move(dx, dy)
 
     def _draw(self, canvas, options):
         args = [canvas]
         for p in self._points:
-            x,y = p.x,p.y
+            x, y = p.x, p.y
             args.append(x)
             args.append(y)
         args.append(options)
@@ -732,10 +757,10 @@ class Text(GraphixObject):
             raise GraphixError("Text anchor must be a Point object")
         if not isinstance(text, str):
             raise GraphixError("Text text must be a string")
-        GraphixObject.__init__(self, ["justify","fill","text","font"])
+        GraphixObject.__init__(self, ["justify", "fill", "text", "font"])
         self.text = text
         self._anchor = anchor.clone()
-        self.fill_colour = cast(str, DEFAULT_CONFIG['outline'])
+        self.fill_colour = cast(str, DEFAULT_CONFIG["outline"])
 
     def __repr__(self) -> str:
         """Returns a string representation of the text object."""
@@ -779,27 +804,27 @@ class Text(GraphixObject):
     @property
     def typeface(self) -> str:
         """The typeface of the text object."""
-        return cast(str, self._config['font'][0])
+        return cast(str, self._config["font"][0])
 
     @typeface.setter
     def typeface(self, face: str) -> None:
-        if face in ['helvetica','arial','courier','times roman']:
-            _, s, b = self._config['font']
-            self._reconfig("font",(face,s,b))
+        if face in ["helvetica", "arial", "courier", "times roman"]:
+            _, s, b = self._config["font"]
+            self._reconfig("font", (face, s, b))
         else:
             raise GraphixError(BAD_OPTION)
 
     @property
     def size(self) -> int:
         """The font size of the text object."""
-        return cast(int, self._config['font'][1])
+        return cast(int, self._config["font"][1])
 
     @size.setter
     def size(self, size: int) -> None:
         if not isinstance(size, int):
             raise GraphixError("Font size must be an integer")
         if 5 <= size <= 36:
-            f, _, b = self._config['font']
+            f, _, b = self._config["font"]
             self._reconfig("font", (f, size, b))
         else:
             raise GraphixError(BAD_OPTION)
@@ -807,13 +832,13 @@ class Text(GraphixObject):
     @property
     def style(self) -> str:
         """The style of the text object."""
-        return cast(str, self._config['font'][2])
+        return cast(str, self._config["font"][2])
 
     @style.setter
     def style(self, style: str) -> None:
-        if style in ['bold','normal','italic', 'bold italic']:
-            f, s, _ = self._config['font']
-            self._reconfig("font", (f,s,style))
+        if style in ["bold", "normal", "italic", "bold italic"]:
+            f, s, _ = self._config["font"]
+            self._reconfig("font", (f, s, style))
         else:
             raise GraphixError(BAD_OPTION)
 
@@ -829,18 +854,25 @@ class Text(GraphixObject):
 
     def _draw(self, canvas, options):
         p = self._anchor
-        x,y = p.x,p.y
-        return canvas.create_text(x,y,options)
+        x, y = p.x, p.y
+        return canvas.create_text(x, y, options)
 
     def _move(self, dx, dy):
-        self._anchor.move(dx,dy)
+        self._anchor.move(dx, dy)
 
 
 class Entry(GraphixObject):
     """A class representing an text entry box with anchor point and width."""
 
-    __slots__ = ["_anchor", "_width", "_text", "_fill_colour", "_text_colour",
-                 "_font", "_entry"]
+    __slots__ = [
+        "_anchor",
+        "_width",
+        "_text",
+        "_fill_colour",
+        "_text_colour",
+        "_font",
+        "_entry",
+    ]
 
     def __init__(self, anchor: Point, width: int) -> None:
         """Initialises the entry object with an anchor point and width."""
@@ -855,7 +887,7 @@ class Entry(GraphixObject):
         self._text.set("")
         self._fill_colour = "grey"
         self._text_colour = "black"
-        self._font = DEFAULT_CONFIG['font']
+        self._font = DEFAULT_CONFIG["font"]
         self._entry = None
 
     def __repr__(self) -> str:
@@ -876,7 +908,7 @@ class Entry(GraphixObject):
         self.text_colour = colour
 
     @property
-    def text(self)  -> str:
+    def text(self) -> str:
         """The text of the entry object."""
         return self._text.get()
 
@@ -906,7 +938,7 @@ class Entry(GraphixObject):
 
     @typeface.setter
     def typeface(self, face: str) -> None:
-        if face in ['helvetica','arial','courier','times roman']:
+        if face in ["helvetica", "arial", "courier", "times roman"]:
             self._set_font_component(0, face)
         else:
             raise GraphixError(BAD_OPTION)
@@ -921,7 +953,7 @@ class Entry(GraphixObject):
         if not isinstance(size, int):
             raise GraphixError("Font size must be an integer")
         if 5 <= size <= 36:
-            self._set_font_component(1,size)
+            self._set_font_component(1, size)
         else:
             raise GraphixError(BAD_OPTION)
 
@@ -932,8 +964,8 @@ class Entry(GraphixObject):
 
     @style.setter
     def style(self, style: str) -> None:
-        if style in ['bold','normal','italic', 'bold italic']:
-            self._set_font_component(2,style)
+        if style in ["bold", "normal", "italic", "bold italic"]:
+            self._set_font_component(2, style)
         else:
             raise GraphixError(BAD_OPTION)
 
@@ -958,27 +990,29 @@ class Entry(GraphixObject):
         """Returns a clone of the entry object."""
         other = Entry(self._anchor, self._width)
         other._config = self._config.copy()
-        #other._text = tk.StringVar()
-        #other._text.set(self._text.get())
+        # other._text = tk.StringVar()
+        # other._text.set(self._text.get())
         other.text = self.text
         return other
 
     def _draw(self, canvas, options):
         p = self._anchor
-        x,y = p.x,p.y
+        x, y = p.x, p.y
         frm = tk.Frame(canvas.master)
-        self._entry = tk.Entry(frm,
-                              width=self._width,
-                              textvariable=self._text,
-                              bg = self._fill_colour,
-                              fg = self._text_colour,
-                              font=self._font)
+        self._entry = tk.Entry(
+            frm,
+            width=self._width,
+            textvariable=self._text,
+            bg=self._fill_colour,
+            fg=self._text_colour,
+            font=self._font,
+        )
         self._entry.pack()
         self._entry.focus_set()
-        return canvas.create_window(x,y,window=frm)
+        return canvas.create_window(x, y, window=frm)
 
     def _move(self, dx, dy):
-        self._anchor.move(dx,dy)
+        self._anchor.move(dx, dy)
 
     def _set_font_component(self, which, value):
         font = list(self._font)
@@ -994,13 +1028,13 @@ class Entry(GraphixObject):
 def test() -> None:
     """A test function for the graphical classes."""
     win = Window()
-    t = Text(Point(300,100), "Centred Text")
+    t = Text(Point(300, 100), "Centred Text")
     print("Window width is", win.width)
     print("Window height is", win.height)
     t.draw(win)
-    p = Polygon([Point(40,40), Point(200,120), Point(80,280)])
+    p = Polygon([Point(40, 40), Point(200, 120), Point(80, 280)])
     p.draw(win)
-    e = Entry(Point(200,240), 10)
+    e = Entry(Point(200, 240), 10)
     e.draw(win)
 
     # mouse click
@@ -1011,12 +1045,12 @@ def test() -> None:
     t.text = e.text
     e.fill_colour = "green"
     e.text = "Spam!"
-    e.move(80,0)
+    e.move(80, 0)
 
     # mouse click
     win.get_mouse()
     win.background_colour = "yellow"
-    p.move(80,120)
+    p.move(80, 120)
     s = ""
     for pt in p.get_points():
         s = s + f" ({pt.x},{pt.y})"
@@ -1053,8 +1087,9 @@ def test() -> None:
     win.get_mouse()
     win.close()
 
-#MacOS fix 2
-#tk.Toplevel(_root).destroy()
+
+# MacOS fix 2
+# tk.Toplevel(_root).destroy()
 
 # MacOS fix 1
 update()

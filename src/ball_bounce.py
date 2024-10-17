@@ -54,7 +54,16 @@ class BallBounce:
 
         for i in range(self.number_of_balls):
             color = "#%06x" % random.randint(0, 0xFFFFFF)
-            balls.append(Ball(self.window, Vector2(200, 200), color, 20, self.ball_speed, 35))
+            balls.append(
+                Ball(
+                    self.window,
+                    Vector2(200, 200),
+                    color,
+                    20,
+                    self.ball_speed,
+                    random.randint(0, 360),
+                )
+            )
 
         # Time delta keeps time so that the movement of the ball is consistent no matter what the fps is
         # using time.sleep is a kind of crude way of making a game loop,
