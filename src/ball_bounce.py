@@ -48,7 +48,7 @@ class BallBounce:
         start_button.undraw()
 
     def simulation(self) -> None:
-        FPS = 30
+        FPS = 60
 
         balls = []
 
