@@ -6,8 +6,15 @@ from utils.vector2 import Vector2
 
 
 class Ball(graphix.Circle):
-    def __init__(self, window: graphix.Window, start_position: Vector2, color: str, radius: int, speed: float,
-                 direction: float):
+    def __init__(
+        self,
+        window: graphix.Window,
+        start_position: Vector2,
+        color: str,
+        radius: int,
+        speed: float,
+        direction: float,
+    ):
         self.position = start_position
         self.window = window
 
