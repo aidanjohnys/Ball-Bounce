@@ -9,8 +9,8 @@ def main():
     window = graphix.Window("Ball Demo", 400, 400)
     FPS = 30
 
-    # we could add an array of actors if we wanted more objects flying around
-    ball = Ball(window, Vector2(200, 200), "Blue", 20, 100, 35)
+    balls = []
+    balls.append(Ball(window, Vector2(200, 200), "Blue", 20, 250, 35))
 
     # Time delta keeps time so that the movement of the ball is consistent no matter what the fps is
     # using time.sleep is a kind of crude way of making a game loop,
@@ -22,9 +22,10 @@ def main():
 
         time.sleep(1 / FPS)  # Should prevent cpu from maxing out
 
-        ball.act(time_delta)
-        ball.undraw()
-        ball.draw(window)
+        for ball in balls:
+            ball.act(time_delta)
+            ball.undraw()
+            ball.draw(window)
 
         # Ball should move at same speed no matter the fps
         time_delta = time.time() - time_before_draw
