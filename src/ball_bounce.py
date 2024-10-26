@@ -8,6 +8,7 @@ from utils.vector2 import Vector2
 
 
 class BallBounce:
+    # TODO: #3 Add docstrings to the class and its methods (and the module)
     def __init__(self):
         self.window = graphix.Window("Ball Demo", 400, 400)
         self.number_of_balls = 0
@@ -28,7 +29,8 @@ class BallBounce:
         ball_speed = graphix.Entry(graphix.Point(200, 150), 4)
         ball_speed.draw(self.window)
 
-        start_button = Button("Start", graphix.Point(150, 300), graphix.Point(250, 330))
+        start_button = Button("Start", graphix.Point(
+            150, 300), graphix.Point(250, 330))
         start_button.draw(self.window)
 
         while True:
@@ -52,6 +54,7 @@ class BallBounce:
 
         balls = []
 
+        # TODO: #2 Unused variable 'i' (install pylint)
         for i in range(self.number_of_balls):
             color = "#%06x" % random.randint(0, 0xFFFFFF)
             balls.append(
