@@ -29,11 +29,9 @@ class Ball(graphix.Circle):
         self.speed = speed
 
     def act(self, delta: float):
-        # print(f"x: {self.position.x} y: {self.position.y} direction: {self.direction}")
-
         self.position = self.calc_new_position(delta)
 
-        self.set_position()
+        self.update_position()
         self.collision_physics()
 
     def calc_new_position(self, delta: float):
@@ -51,16 +49,10 @@ class Ball(graphix.Circle):
 
         return Vector2(new_x, new_y)
 
-    def set_position(self):
-        # updates the internal position of the circle
-        # accessing protected variables here to change the position
-        # I can't find any other way to do this without moving the position relatively
+    def update_position(self):
+        # Using the tkinter canvas api to directly change the position of the ball
 
-        self._p1._x = self.position.x - self.radius
-        self._p1._y = self.position.y - self.radius
-
-        self._p2._x = self.position.x + self.radius
-        self._p2._y = self.position.y + self.radius
+        self._canvas.moveto(self._id, self.position.x - self.radius, self.position.y - self.radius)
 
     def collision_physics(self):
         # checks if ball is against wall
